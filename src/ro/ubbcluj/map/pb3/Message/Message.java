@@ -6,15 +6,24 @@ import ro.ubbcluj.map.pb3.domain.Utilizator;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public abstract class Message extends Entity<Long> {
+public class Message extends Entity<Long> {
     private Utilizator from;
     private List<Utilizator> to;
+    private String msg;
     private LocalDateTime data;
 
-    public Message(Utilizator from, List<Utilizator> to, LocalDateTime data) {
+    public Message(Utilizator from, List<Utilizator> to, String msg) {
         this.from = from;
         this.to = to;
-        this.data = data;
+        this.msg = msg;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public Utilizator getFrom() {
