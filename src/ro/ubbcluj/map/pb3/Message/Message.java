@@ -3,19 +3,28 @@ package ro.ubbcluj.map.pb3.Message;
 import ro.ubbcluj.map.pb3.domain.Entity;
 import ro.ubbcluj.map.pb3.domain.Utilizator;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class Message extends Entity<Long> {
     private Utilizator from;
     private List<Utilizator> to;
-    private String msg;
+    private String msg, replyMsg = null;
     private LocalDateTime data;
 
     public Message(Utilizator from, List<Utilizator> to, String msg) {
         this.from = from;
         this.to = to;
         this.msg = msg;
+    }
+
+    public String getReplyMsg() {
+        return replyMsg;
+    }
+
+    public void setReplyMsg(String replyMsg) {
+        this.replyMsg = replyMsg;
     }
 
     public String getMsg() {

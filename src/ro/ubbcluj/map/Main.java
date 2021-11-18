@@ -1,14 +1,17 @@
 package ro.ubbcluj.map;
 
 
+import ro.ubbcluj.map.pb3.Message.Message;
 import ro.ubbcluj.map.pb3.domain.Prietenie;
 import ro.ubbcluj.map.pb3.domain.Tuple;
 import ro.ubbcluj.map.pb3.domain.Utilizator;
 import ro.ubbcluj.map.pb3.domain.validators.FriendshipValidator;
+import ro.ubbcluj.map.pb3.domain.validators.MessageValidator;
 import ro.ubbcluj.map.pb3.domain.validators.UtilizatorValidator;
 import ro.ubbcluj.map.pb3.domain.validators.ValidationException;
 import ro.ubbcluj.map.pb3.repository.Repository;
 import ro.ubbcluj.map.pb3.repository.db.FriendshipDbRepository;
+import ro.ubbcluj.map.pb3.repository.db.MessageDbRepository;
 import ro.ubbcluj.map.pb3.repository.db.UtilizatorDbRepository;
 import ro.ubbcluj.map.pb3.repository.file.FriendshipFile;
 import ro.ubbcluj.map.pb3.repository.file.UtilizatorFile;
@@ -18,9 +21,7 @@ import javax.sound.midi.Soundbank;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -36,24 +37,17 @@ public class Main {
 
 //        Repository<Long, Utilizator> repo = new UtilizatorFile("data/users.csv", new UtilizatorValidator());
         Repository<Tuple<Long, Long>, Prietenie> repoFriend = new FriendshipFile("data/friendship.csv", new FriendshipValidator());
-//        Utilizator us = new Utilizator("A", "B");
-//        us.setId(3L);
-//        repo.save(us);
-//        us.setFirstName("C");
-//        us.setLastName("D");
-//        repo.update(us);
-//        repo.delete(3L);
+
         Repository<Long, Utilizator> repoDb = new UtilizatorDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new UtilizatorValidator());
         Repository<Tuple<Long, Long>, Prietenie> repoFDb = new FriendshipDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new FriendshipValidator());
-//        repoFDb.findAll().forEach(System.out::println);
-//        repoDb.findAll().forEach(System.out::println);
-//        repoDb.save(new Utilizator("caca","maca"));
-//        repoDb.delete(6L);
-//        Utilizator utilizator = new Utilizator("ala", "bala");
-//        utilizator.setId(4L);
-//        repoDb.update(utilizator);
-//        System.out.println(repoDb.findOne(2L));
+        Repository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
         UtilizatorService service = new UtilizatorService(repoDb, repoFDb);
+
+        Utilizator utilizator = new Utilizator("COCO","FLO");
+        Utilizator utilizator1 = new Utilizator("Rares","Co");
+        List<Utilizator> l = new ArrayList<Utilizator>();
+        l.add(utilizator);
+        repoMsgDb.save(new Message(utilizator1, l, "aia e"));
 
         boolean run = true;
         while (run) {
