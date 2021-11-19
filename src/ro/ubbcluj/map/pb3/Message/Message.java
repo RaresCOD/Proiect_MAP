@@ -10,7 +10,8 @@ import java.util.List;
 public class Message extends Entity<Long> {
     private Utilizator from;
     private List<Utilizator> to;
-    private String msg, replyMsg = null;
+    private String msg;
+    private Message replyMsg;
     private LocalDateTime data;
 
     public Message(Utilizator from, List<Utilizator> to, String msg) {
@@ -19,11 +20,11 @@ public class Message extends Entity<Long> {
         this.msg = msg;
     }
 
-    public String getReplyMsg() {
+    public Message getReplyMsg() {
         return replyMsg;
     }
 
-    public void setReplyMsg(String replyMsg) {
+    public void setReplyMsg(Message replyMsg) {
         this.replyMsg = replyMsg;
     }
 

@@ -42,18 +42,20 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
     @Override
     public Message save(Message entity) {
-        String sql = "insert into messages (from, to, msg) values (?, ?, ?)";
+        String sql = "insert into messages (from1, to1, msg) values (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setString(1, entity.getFrom().getFirstName());
-            ps.setString(2, String.valueOf(entity.getTo()
+            String to1 = String.valueOf(entity.getTo()
                     .stream()
-                    .map(x -> x.getFirstName())
-                    .reduce((x,y) -> x.concat(y)))
-            );
+                    .map(x -> x.getId().toString())
+                    .reduce(" ",(u,v) -> u.concat(v)));
+
+            ps.setInt(1, Math.toIntExact(entity.getFrom().getId()));
+            ps.setString(2, to1);
             ps.setString(3, entity.getMsg());
+            ps.executeUpdate();
 //            ps.setDate(4, java.sql.Date.valueOf(entity.getData().toLocalDate()));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,17 +71,6 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
     @Override
     public Message update(Message entity) {
-        String sql = "update messages set replyMsg = ? where id = ? ";
-
-        try (Connection connection = DriverManager.getConnection(url, username, password);
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, entity.getReplyMsg());
-            ps.setInt(2, Math.toIntExact(entity.getId()));
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         return null;
     }
 }
