@@ -2,12 +2,14 @@ package ro.ubbcluj.map.pb3.service;
 
 import jdk.jshell.execution.Util;
 import ro.ubbcluj.map.pb3.Conexitate.DFS;
+import ro.ubbcluj.map.pb3.Message.Message;
 import ro.ubbcluj.map.pb3.domain.Prietenie;
 import ro.ubbcluj.map.pb3.domain.Tuple;
 import ro.ubbcluj.map.pb3.domain.Utilizator;
 import ro.ubbcluj.map.pb3.domain.validators.ValidationException;
 import ro.ubbcluj.map.pb3.repository.Repository;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import java.util.List;
 public class UtilizatorService {
     Repository<Long, Utilizator> repo;
     Repository<Tuple<Long, Long>, Prietenie> repoFriend;
+    Repository<Long, Message> repoMessages;
 
     private void makeFriends() {
         for(Prietenie curent : repoFriend.findAll()) {
@@ -52,9 +55,10 @@ public class UtilizatorService {
      * @param repo user repo
      * @param repoFriend friendship repo
      */
-    public UtilizatorService(Repository<Long, Utilizator> repo, Repository<Tuple<Long, Long>, Prietenie> repoFriend) {
+    public UtilizatorService(Repository<Long, Utilizator> repo, Repository<Tuple<Long, Long>, Prietenie> repoFriend, Repository<Long, Message> repoMessages) {
         this.repo = repo;
         this.repoFriend = repoFriend;
+        this.repoMessages = repoMessages;
         makeFriends();
     }
 
@@ -221,5 +225,26 @@ public class UtilizatorService {
         return dfs.execute2();
     }
 
+    private Long getUserId(String userName) {
+        Iterable<Utilizator> list = repo.findAll();
+        for (Utilizator curent: list) {
+            if(curent.getFirstName().equals(userName)) {
+                return curent.getId();
+            }
+        }
+        return null;
+    }
+
+    public Long Login(String userName) {
+        return getUserId(userName);
+    }
+
+    public void addMessage(Long id1, Long id2, String msg) {
+        Utilizator from = repo.findOne(id1);
+        Utilizator user2 = repo.findOne(id2);
+        List<Utilizator> to = new ArrayList<Utilizator>();
+        to.add(user2);
+        repoMessages.save(new Message(from,to,msg));
+    }
 
 }
