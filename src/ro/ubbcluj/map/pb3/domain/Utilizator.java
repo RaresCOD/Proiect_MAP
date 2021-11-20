@@ -19,7 +19,7 @@ public class Utilizator extends Entity<Long>{
     /**
      * friends
      */
-    private List<Utilizator> friends;
+    private List<Utilizator> friends = new ArrayList<Utilizator>();
 
     /**
      * constructor
@@ -29,7 +29,6 @@ public class Utilizator extends Entity<Long>{
     public Utilizator(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.friends = new ArrayList<Utilizator>();
     }
 
     /**
@@ -77,7 +76,7 @@ public class Utilizator extends Entity<Long>{
      * @param e user
      */
     public void addFriend(Utilizator e) {
-        friends.add(e);
+        this.friends.add(e);
     }
 
     /**

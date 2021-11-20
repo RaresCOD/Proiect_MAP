@@ -42,6 +42,40 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
                String lastName = result.getString("last_name");
                Utilizator utilizator = new Utilizator(firstName, lastName);
                utilizator.setId(id);
+               String sql1 = "select friendship.id2, friendship.id1\n" +
+                       "from users\n" +
+                       "inner join friendship\n" +
+                       "on users.id = friendship.id1 or users.id = friendship.id2 \n" +
+                       "where users.id = " + id;
+               try(Connection connection1 = DriverManager.getConnection(url, username, password);
+               PreparedStatement ps1 = connection1.prepareStatement(sql1)) {
+                   ResultSet resultSet = ps1.executeQuery();
+                   while(resultSet.next()) {
+                       Long id1 = Long.valueOf(resultSet.getInt("id1"));
+                       Long id2 = Long.valueOf(resultSet.getInt("id2"));
+                       Long idBun;
+                       if(id1 != id) {
+                           idBun = id1;
+                       } else {
+                           idBun = id2;
+                       }
+
+                       String sql2 = "select * from users where id = " + idBun;
+
+                       try(Connection connection2 = DriverManager.getConnection(url, username, password);
+                           PreparedStatement ps2 = connection.prepareStatement(sql)) {
+                           ResultSet resultSet1 = ps2.executeQuery();
+                           while (resultSet1.next()) {
+                               String firstName1 = resultSet1.getString("first_name");
+                               String lastName2 = resultSet1.getString("last_name");
+                               Utilizator utilizator1 = new Utilizator(firstName1, lastName2);
+                               utilizator1.setId(idBun);
+                               utilizator.addFriend(utilizator1);
+                               }
+                       }
+                   }
+               }
+
                return utilizator;
            }
         } catch (SQLException e) {

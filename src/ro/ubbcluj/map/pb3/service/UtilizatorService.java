@@ -29,7 +29,13 @@ public class UtilizatorService {
             Utilizator util2 = repo.findOne(right);
             util1.addFriend(util2);
             util2.addFriend(util1);
+//            System.out.println(util1.getFriends());
         }
+        for(Utilizator curent:repo.findAll()){
+            System.out.println(curent);
+            System.out.println(curent.getFriends());
+        }
+
     }
 
     private Long lastID() {
@@ -59,7 +65,7 @@ public class UtilizatorService {
         this.repo = repo;
         this.repoFriend = repoFriend;
         this.repoMessages = repoMessages;
-        makeFriends();
+//        makeFriends();
     }
 
     /**
@@ -244,6 +250,18 @@ public class UtilizatorService {
         Utilizator user2 = repo.findOne(id2);
         List<Utilizator> to = new ArrayList<Utilizator>();
         to.add(user2);
+        repoMessages.save(new Message(from,to,msg));
+    }
+
+    public void addGroupMessage(Long id1, List<Long> Listid, String msg) {
+        Utilizator from = repo.findOne(id1);
+        List<Utilizator> to = new ArrayList<Utilizator>();
+        Listid
+                .stream()
+                .forEach(x -> to.add(repo.findOne(x)));
+//        Utilizator user2 = repo.findOne(id2);
+
+//        to.add(user2);
         repoMessages.save(new Message(from,to,msg));
     }
 

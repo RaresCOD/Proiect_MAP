@@ -44,6 +44,8 @@ public class Main {
         Repository<Long, Message> repoMsgDb = new MessageDbRepository("jdbc:postgresql://localhost:5432/Tema1", "postgres", "kokonel1002", new MessageValidator());
         UtilizatorService service = new UtilizatorService(repoDb, repoFDb, repoMsgDb);
 
+        System.out.println(service.getFriends(3L));
+
 //        Utilizator utilizator = new Utilizator("COCO","FLO");
 //        utilizator.setId(1L);
 //        Utilizator utilizator1 = new Utilizator("Rares","Co");
