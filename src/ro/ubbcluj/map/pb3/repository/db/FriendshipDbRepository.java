@@ -63,7 +63,6 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                Long id = resultSet.getLong("id");
                 Long id1 = resultSet.getLong("id1");
                 Long id2 = resultSet.getLong("id2");
 
