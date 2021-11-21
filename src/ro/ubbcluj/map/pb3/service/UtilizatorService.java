@@ -9,6 +9,8 @@ import ro.ubbcluj.map.pb3.domain.Utilizator;
 import ro.ubbcluj.map.pb3.domain.validators.ValidationException;
 import ro.ubbcluj.map.pb3.repository.Repository;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -159,6 +161,8 @@ public class UtilizatorService {
         }
 
         prietenie.setId(tuple);
+        LocalDateTime currentDate = LocalDateTime.now();
+        prietenie.setDate(new Date(currentDate.getYear() - 1900, currentDate.getMonthValue(), currentDate.getDayOfMonth()));
 
         repoFriend.save(prietenie);
         Utilizator util1 = repo.findOne(id1);
