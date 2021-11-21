@@ -2,7 +2,6 @@ package ro.ubbcluj.map.pb3.repository.db;
 
 import ro.ubbcluj.map.pb3.domain.Prietenie;
 import ro.ubbcluj.map.pb3.domain.Tuple;
-import ro.ubbcluj.map.pb3.domain.Utilizator;
 import ro.ubbcluj.map.pb3.domain.validators.ValidationException;
 import ro.ubbcluj.map.pb3.domain.validators.Validator;
 import ro.ubbcluj.map.pb3.repository.Repository;
@@ -44,9 +43,11 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
             while (result.next()) {
                 Long id1 = result.getLong("id1");
                 Long id2 = result.getLong("id2");
+                Date date = result.getDate("dateofaccept");
                 Prietenie prietenie = new Prietenie();
                 Tuple<Long, Long> tuple = new Tuple(id1, id2);
                 prietenie.setId(tuple);
+                prietenie.setDate(date);
                 return prietenie;
             }
         } catch (SQLException e) {
@@ -66,10 +67,11 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
             while (resultSet.next()) {
                 Long id1 = resultSet.getLong("id1");
                 Long id2 = resultSet.getLong("id2");
-
+                Date date = resultSet.getDate("dateofaccept");
                 Prietenie prietenie = new Prietenie();
                 Tuple<Long, Long> tuple = new Tuple(id1, id2);
                 prietenie.setId(tuple);
+                prietenie.setDate(date);
                 friends.add(prietenie);
             }
             return friends;
@@ -83,13 +85,14 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
     public Prietenie save(Prietenie entity) throws ValidationException {
         validator.validate(entity);
 
-        String sql = "insert into friendship (id1, id2) values (?, ?)";
+        String sql = "insert into friendship (id1, id2, dateofaccept) values (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setInt(1, Math.toIntExact(entity.getId().getLeft()));
             ps.setInt(2, Math.toIntExact(entity.getId().getRight()));
+            ps.setDate(3, entity.getDate());
 
             ps.executeUpdate();
         } catch (SQLException e) {
