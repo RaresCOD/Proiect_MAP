@@ -3,6 +3,7 @@ package ro.ubbcluj.map.pb3.repository.db;
 import ro.ubbcluj.map.pb3.domain.Prietenie;
 import ro.ubbcluj.map.pb3.domain.Tuple;
 import ro.ubbcluj.map.pb3.domain.Utilizator;
+import ro.ubbcluj.map.pb3.domain.validators.ValidationException;
 import ro.ubbcluj.map.pb3.domain.validators.Validator;
 import ro.ubbcluj.map.pb3.repository.Repository;
 
@@ -79,7 +80,8 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
     }
 
     @Override
-    public Prietenie save(Prietenie entity) {
+    public Prietenie save(Prietenie entity) throws ValidationException {
+        validator.validate(entity);
 
         String sql = "insert into friendship (id1, id2) values (?, ?)";
 
