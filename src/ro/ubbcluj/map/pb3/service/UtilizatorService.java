@@ -12,6 +12,7 @@ import ro.ubbcluj.map.pb3.repository.Repository;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * service
@@ -250,7 +251,9 @@ public class UtilizatorService {
         Utilizator user2 = repo.findOne(id2);
         List<Utilizator> to = new ArrayList<Utilizator>();
         to.add(user2);
-        repoMessages.save(new Message(from,to,msg));
+        Message message = new Message(from, to, msg);
+        message.setReplyMsg(null);
+        repoMessages.save(message);
     }
 
     public void addGroupMessage(Long id1, List<Long> Listid, String msg) {
@@ -262,7 +265,48 @@ public class UtilizatorService {
 //        Utilizator user2 = repo.findOne(id2);
 
 //        to.add(user2);
-        repoMessages.save(new Message(from,to,msg));
+        Message message = new Message(from, to, msg);
+        message.setReplyMsg(null);
+        repoMessages.save(message);
+    }
+
+    public void showAllMessagesForThisUser(Long userId) {
+        Iterable<Message> all = repoMessages.findAll();
+        for(Message curent:all) {
+            List<Utilizator> list = curent.getTo();
+            Boolean found = false;
+            for(Utilizator to:list) {
+                if(to.getId() == userId) {
+                    found = true;
+                }
+            }
+            if (found == true) {
+                System.out.println(curent.getFrom().getFirstName() + " sent " + curent.getMsg() + " id: " + curent.getId());
+            }
+        }
+    }
+
+    public void showAllGroupChats(Long userId) {
+        Iterable<Message> all = repoMessages.findAll();
+
+        for (Message curent: all) {
+
+        }
+    }
+
+    public void sendReply(Long msgId, Long userId, String msg) {
+        Utilizator from = repo.findOne(userId);
+        Message message = repoMessages.findOne(msgId);
+        List<Utilizator> to = new ArrayList<>();
+        to.add(message.getFrom());
+        for(Utilizator curent: message.getTo()) {
+            if(curent.getId() != userId) {
+                to.add(curent);
+            }
+        }
+        Message newReply = new Message(from, to, msg);
+        newReply.setReplyMsg(message);
+        repoMessages.save(newReply);
     }
 
 }

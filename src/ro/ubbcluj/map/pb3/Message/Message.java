@@ -65,7 +65,7 @@ public class Message extends Entity<Long> {
         return "Message{" +
                 "from=" + from +
                 ", to=" + to +
-                ", data=" + data +
+                ", msg=" + msg +
                 '}';
     }
 }

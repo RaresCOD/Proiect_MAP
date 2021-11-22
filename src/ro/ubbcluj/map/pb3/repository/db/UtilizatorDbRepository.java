@@ -63,7 +63,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
                        String sql2 = "select * from users where id = " + idBun;
 
                        try(Connection connection2 = DriverManager.getConnection(url, username, password);
-                           PreparedStatement ps2 = connection.prepareStatement(sql)) {
+                           PreparedStatement ps2 = connection.prepareStatement(sql2)) {
                            ResultSet resultSet1 = ps2.executeQuery();
                            while (resultSet1.next()) {
                                String firstName1 = resultSet1.getString("first_name");
