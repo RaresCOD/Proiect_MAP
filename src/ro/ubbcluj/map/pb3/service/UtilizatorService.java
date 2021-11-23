@@ -140,10 +140,14 @@ public class UtilizatorService {
         if (repo.findOne(id2) == null) {
             throw new ValidationException("User inexistent!");
         }
+        if(repoFriend.findOne(new Tuple<>(id1, id2)) != null){
+            throw new ValidationException("Cerere de prietenie deja trimisa!");
+        }
 
         prietenie.setId(tuple);
         LocalDateTime currentDate = LocalDateTime.now();
         prietenie.setDate(new Date(currentDate.getYear() - 1900, currentDate.getMonthValue(), currentDate.getDayOfMonth()));
+        prietenie.setStatus(1);
 
         repoFriend.save(prietenie);
     }
@@ -163,11 +167,50 @@ public class UtilizatorService {
         if (repoFriend.findOne(new Tuple(id1, id2)) == null) {
             throw new ValidationException("Prietenie inexistenta!");
         }
-        Utilizator util1 = repo.findOne(id1);
-        Utilizator util2 = repo.findOne(id2);
-        util1.deleteFriend(util2);
-        util2.deleteFriend(util1);
         repoFriend.delete(new Tuple(id1, id2));
+    }
+
+    /**
+     *
+     * @param id id
+     * @return specific friends
+     */
+    public List<Tuple<Utilizator, Date>> getFriendRequests(Long id) {
+        List<Tuple<Utilizator, Date>> rez = repoFriend.findAll().stream()
+                .filter(x -> {
+                    if (x.getId().getLeft() == id && x.getStatus() == 1) {
+                        return true;
+                    } else if (x.getId().getRight() == id && x.getStatus() == 1) {
+                        return true;
+                    } else return false;
+                })
+                .map(x -> {
+                            if (x.getId().getRight() == id)
+                                return new Tuple<Utilizator, Date>(repo.findOne(x.getId().getLeft()), x.getDate());
+                            else
+                                return new Tuple<Utilizator, Date>(repo.findOne(x.getId().getRight()), x.getDate());
+                        }
+                )
+                .toList();
+
+        return rez;
+    }
+
+
+    /**
+     * Answer a friend request.
+     * @param id1 id user1
+     * @param id2 id user2
+     * @param answer the status to be set
+     */
+    public void answerFriendRequest(Long id1, Long id2, int answer)
+    {
+        Prietenie updated = new Prietenie();
+        updated.setId(new Tuple<>(id1, id2));
+        LocalDateTime currentDate = LocalDateTime.now();
+        updated.setDate(new Date(currentDate.getYear() - 1900, currentDate.getMonthValue(), currentDate.getDayOfMonth()));
+        updated.setStatus(answer);
+        repoFriend.update(updated);
     }
 
     /**
@@ -178,13 +221,19 @@ public class UtilizatorService {
     public List<Tuple<Utilizator, Date>> getFriends(Long id) {
         List<Tuple<Utilizator, Date>> rez = repoFriend.findAll().stream()
                 .filter(x -> {
-                    if (x.getId().getLeft() == id) {
+                    if (x.getId().getLeft() == id && x.getStatus() == 2) {
                         return true;
-                    } else if (x.getId().getRight() == id) {
+                    } else if (x.getId().getRight() == id && x.getStatus() == 2) {
                         return true;
                     } else return false;
                 })
-                .map(x -> new Tuple<Utilizator, Date>(repo.findOne(x.getId().getRight()), x.getDate()))
+                .map(x -> {
+                    if (x.getId().getRight() == id)
+                        return new Tuple<Utilizator, Date>(repo.findOne(x.getId().getLeft()), x.getDate());
+                    else
+                        return new Tuple<Utilizator, Date>(repo.findOne(x.getId().getRight()), x.getDate());
+                        }
+                )
                 .toList();
 
         return rez;
@@ -233,7 +282,7 @@ public class UtilizatorService {
         return dfs.execute2();
     }
 
-    private Long getUserId(String userName) {
+    public Long getUserId(String userName) {
         Iterable<Utilizator> list = repo.findAll();
         for (Utilizator curent: list) {
             if(curent.getUsername().equals(userName)) {
@@ -306,9 +355,8 @@ public class UtilizatorService {
     }
 
     public boolean areFriends(Long id1, Long id2) {
-        if (repoFriend.findOne(new Tuple<>(id1,id2)) == null && repoFriend.findOne(new Tuple<>(id2,id1)) == null) {
-            return false;
-        }
+        Prietenie p = repoFriend.findOne(new Tuple<>(id1,id2));
+        if (p == null || p.getStatus() != 2) return false;
         return true;
     }
 

@@ -51,7 +51,7 @@ public class Prietenie extends Entity<Tuple<Long,Long>> {
 
     /**
      *
-     * @param status the status of the friendship to be set
+     * @param status the status of the friendship to be set (1 - pending, 2 - approved, 3 - rejected)
      */
     public void setStatus(int status) { this.status = status; }
 }

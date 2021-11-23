@@ -37,10 +37,14 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
 
     @Override
     public Prietenie findOne(Tuple<Long, Long> longLongTuple) {
-        String sql = "select * from friendship where id1 = " + longLongTuple.getLeft() + "and id2 = "+ longLongTuple.getRight();
+        String sql = "select * from friendship where (id1 = ? and id2 = ?) or (id1 = ? and id2 = ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, longLongTuple.getLeft().intValue());
+            ps.setInt(2, longLongTuple.getRight().intValue());
+            ps.setInt(3, longLongTuple.getRight().intValue());
+            ps.setInt(4, longLongTuple.getLeft().intValue());
             ResultSet result = ps.executeQuery();
             while (result.next()) {
                 Long id1 = result.getLong("id1");
@@ -111,10 +115,14 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
     @Override
     public Prietenie delete(Tuple<Long, Long> id) {
 
-        String sql = "delete from friendship where id1 = " + id.getLeft() + " and id2 = " + id.getRight();
+        String sql = "delete from friendship where (id1 = ? and id2 = ?) or (id1 = ? and id2 = ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id.getLeft().intValue());
+            ps.setInt(2, id.getRight().intValue());
+            ps.setInt(3, id.getRight().intValue());
+            ps.setInt(4, id.getLeft().intValue());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -124,13 +132,16 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
 
     @Override
     public Prietenie update(Prietenie entity) {
-        String sql = "update friendship set status = ? where id1 = ? and id2 = ?";
+        String sql = "update friendship set status = ?, dateofaccept = ? where (id1 = ? and id2 = ?) or (id1 = ? and id2 = ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, entity.getStatus());
-            ps.setInt(2, entity.getId().getLeft().intValue());
-            ps.setInt(3, entity.getId().getRight().intValue());
+            ps.setDate(2, entity.getDate());
+            ps.setInt(3, entity.getId().getLeft().intValue());
+            ps.setInt(4, entity.getId().getRight().intValue());
+            ps.setInt(5, entity.getId().getRight().intValue());
+            ps.setInt(6, entity.getId().getLeft().intValue());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

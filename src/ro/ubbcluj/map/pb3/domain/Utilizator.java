@@ -107,7 +107,7 @@ public class Utilizator extends Entity<Long>{
 
     @Override
     public String toString() {
-        return getId() + " " + firstName + " " + lastName;
+        return getId() + " " + firstName + " " + lastName + " (username: " + username + ")";
     }
 
     @Override

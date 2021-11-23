@@ -177,7 +177,6 @@ public class Ui {
                     System.out.println("Login: ");
                     username = cin.readLine();
                     Long id4 = service.Login(username);
-                    System.out.println(id4);
                     if( id4 != null) {
                         UiUsers uiUsers = new UiUsers(id4, service);
                         uiUsers.menu();

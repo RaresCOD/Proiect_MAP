@@ -18,8 +18,26 @@ public class UiUsers {
     private Long userId;
     UtilizatorService service;
 
-    private void allChats() {
-
+    private void showFriendRequests() {
+        try {
+            System.out.println("Friend requests: ");
+            List<Tuple<Utilizator, Date>> rez = service.getFriendRequests(userId);
+            if (rez.size() > 0) rez.forEach(System.out::println);
+            else return;
+            System.out.println("Enter the username of the user whom you want to respond: ");
+            String username = cin.readLine();
+            System.out.println("Enter 1 if you want to approve it or 2 if you want to reject it: ");
+            int answer = Integer.parseInt(cin.readLine());
+            if (answer == 2 || answer > 2) answer = 3;
+            else if (answer == 1) answer = 2;
+            Long userId2 = service.getUserId(username);
+            if(userId2 == null) System.out.println("The entered username is invalid.");
+            else service.answerFriendRequest(userId, userId2, answer);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
 
     public UiUsers(Long userId, UtilizatorService service) {
@@ -28,29 +46,32 @@ public class UiUsers {
     }
 
     public void menu() {
-        try {
-            Boolean run = true;
-            while (run == true) {
-                System.out.println("Recived Messages:");
-                service.showAllMessagesForThisUser(userId);
-                System.out.println("////////////////");
-                System.out.println("1 - Send a private message");
-                System.out.println("2 - Send Group message");
-                System.out.println("3 - Reply to a message");
-                System.out.println("4 - Show all friends");
-                System.out.println("5 - Show friends from a specific month");
-                System.out.println("0 - Logout");
+
+        Boolean run = true;
+        while (run == true) {
+            System.out.println("Recived Messages:");
+            service.showAllMessagesForThisUser(userId);
+            System.out.println("////////////////");
+            System.out.println("1 - Send a private message");
+            System.out.println("2 - Send Group message");
+            System.out.println("3 - Reply to a message");
+            System.out.println("4 - Show all friends");
+            System.out.println("5 - Show friends from a specific month");
+            System.out.println("6 - Send a friend request");
+            System.out.println("7 - Show friend requests and answer them.");
+            System.out.println("0 - Logout");
+            try {
                 String cmd = cin.readLine();
                 if (Pattern.matches("^[a-zA-Z]*$", cmd)) {
                     System.out.println("Invalid input");
                 } else {
                     int cmdNou = Integer.parseInt(cmd);
-                    switch (cmdNou){
+                    switch (cmdNou) {
                         case 1:
                             System.out.println("Choose a friend to chat with:");
                             String friendUserName = cin.readLine();
                             Long friendUserId = service.Login(friendUserName);
-                            if(service.areFriends(userId, friendUserId) == false) {
+                            if (service.areFriends(userId, friendUserId) == false) {
                                 System.out.println(friendUserName + " is not a friend");
                                 break;
                             }
@@ -70,7 +91,7 @@ public class UiUsers {
                                     System.out.println("Invalid input");
                                 } else {
                                     int cmd1 = Integer.parseInt(cmd11);
-                                    if(cmd1 == 0) {
+                                    if (cmd1 == 0) {
                                         break;
                                     } else {
                                         String friendUserName1 = cin.readLine();
@@ -79,7 +100,7 @@ public class UiUsers {
                                         if (friendUserId1 == null) {
                                             System.out.println("Invalid User");
                                         } else {
-                                            if(service.areFriends(userId, friendUserId1) == false) {
+                                            if (service.areFriends(userId, friendUserId1) == false) {
                                                 System.out.println(friendUserName1 + " is not a friend");
                                             } else {
                                                 Listid.add(friendUserId1);
@@ -90,7 +111,7 @@ public class UiUsers {
                             }
                             System.out.println("Message:");
                             String msg = cin.readLine();
-                            service.addGroupMessage(userId,Listid, msg);
+                            service.addGroupMessage(userId, Listid, msg);
                             break;
                         case 3:
                             System.out.println("Select the message and user you want to reply to\nId:");
@@ -106,7 +127,7 @@ public class UiUsers {
                             break;
                         case 4:
                             System.out.println("Friends list: ");
-                            for(Tuple<Utilizator, Date> curent: service.getFriends(userId)) {
+                            for (Tuple<Utilizator, Date> curent : service.getFriends(userId)) {
                                 System.out.println(curent.getLeft().getFirstName() + " | " + curent.getLeft().getLastName() + " | " + curent.getRight());
                             }
                             break;
@@ -114,21 +135,28 @@ public class UiUsers {
                             System.out.println("Enter the month number: ");
                             String _cmd = cin.readLine();
                             int month = Integer.parseInt(_cmd);
-                            for(Tuple<Utilizator, Date> curent: service.getFriendsFromMonth(userId, month)) {
+                            if(month > 12 || month < 0) System.out.println("Invalid month number.");
+                            else for (Tuple<Utilizator, Date> curent : service.getFriendsFromMonth(userId, month)) {
                                 System.out.println(curent.getLeft().getFirstName() + " | " + curent.getLeft().getLastName() + " | " + curent.getRight());
                             }
+                            break;
+                        case 6:
+                            System.out.println("Enter the username of the user you want to send a friend request: ");
+                            String _username = cin.readLine();
+                            service.addFriend(userId, service.getUserId(_username));
+                            break;
+                        case 7:
+                            showFriendRequests();
                             break;
                         case 0:
                             run = false;
                             break;
                     }
                 }
-
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                continue;
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-
 }
