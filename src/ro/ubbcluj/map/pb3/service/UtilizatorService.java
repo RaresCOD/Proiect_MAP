@@ -196,7 +196,7 @@ public class UtilizatorService {
      * @return specific friends
      */
     public List<Tuple<Utilizator, Date>> getFriendsFromMonth(Long id, int month)  {
-        return getFriends(id).stream().filter(x -> x.getRight().getMonth() != month).toList();
+        return getFriends(id).stream().filter(x -> x.getRight().toLocalDate().getMonthValue() == month).toList();
     }
 
     /**
