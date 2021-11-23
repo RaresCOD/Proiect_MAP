@@ -7,6 +7,7 @@ import ro.ubbcluj.map.pb3.repository.Repository;
 
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class MessageDbRepository implements Repository<Long, Message> {
@@ -131,8 +132,10 @@ public class MessageDbRepository implements Repository<Long, Message> {
                     }
                 }
                 String msg = resultSet.getString("msg");
+                LocalDateTime date = resultSet.getTimestamp("data").toLocalDateTime();
                 Message message = new Message(utilizator,list,msg);
                 message.setId(idCurent);
+                message.setData(date);
                 all.add(message);
             }
             return all.stream().toList();
