@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     private String url;
-    private String username;
+    private String _username;
     private String password;
     private Validator<Utilizator> validator;
 
@@ -26,7 +26,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
      */
     public UtilizatorDbRepository(String url, String username, String password, Validator<Utilizator> validator) {
         this.url = url;
-        this.username = username;
+        this._username = username;
         this.password = password;
         this.validator = validator;
     }
@@ -34,20 +34,21 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     public Utilizator findOne(Long id) {
         String sql = "select * from users where id = " + id;
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = DriverManager.getConnection(url, _username, password);
         PreparedStatement ps = connection.prepareStatement(sql)) {
            ResultSet result = ps.executeQuery();
            while (result.next()) {
                String firstName = result.getString("first_name");
                String lastName = result.getString("last_name");
-               Utilizator utilizator = new Utilizator(firstName, lastName);
+               String username = result.getString("username");
+               Utilizator utilizator = new Utilizator(username, firstName, lastName);
                utilizator.setId(id);
                String sql1 = "select friendship.id2, friendship.id1\n" +
                        "from users\n" +
                        "inner join friendship\n" +
                        "on users.id = friendship.id1 or users.id = friendship.id2 \n" +
                        "where users.id = " + id;
-               try(Connection connection1 = DriverManager.getConnection(url, username, password);
+               try(Connection connection1 = DriverManager.getConnection(url, _username, password);
                PreparedStatement ps1 = connection1.prepareStatement(sql1)) {
                    ResultSet resultSet = ps1.executeQuery();
                    while(resultSet.next()) {
@@ -62,13 +63,14 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
 
                        String sql2 = "select * from users where id = " + idBun;
 
-                       try(Connection connection2 = DriverManager.getConnection(url, username, password);
+                       try(Connection connection2 = DriverManager.getConnection(url, _username, password);
                            PreparedStatement ps2 = connection.prepareStatement(sql2)) {
                            ResultSet resultSet1 = ps2.executeQuery();
                            while (resultSet1.next()) {
-                               String firstName1 = resultSet1.getString("first_name");
+                               String firstName2 = resultSet1.getString("first_name");
                                String lastName2 = resultSet1.getString("last_name");
-                               Utilizator utilizator1 = new Utilizator(firstName1, lastName2);
+                               String username2 = resultSet1.getString("username");
+                               Utilizator utilizator1 = new Utilizator(username2, firstName2, lastName2);
                                utilizator1.setId(idBun);
                                utilizator.addFriend(utilizator1);
                                }
@@ -87,7 +89,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     @Override
     public Iterable<Utilizator> findAll() {
         Set<Utilizator> users = new HashSet<>();
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = DriverManager.getConnection(url, _username, password);
              PreparedStatement statement = connection.prepareStatement("SELECT * from users");
              ResultSet resultSet = statement.executeQuery()) {
 
@@ -95,8 +97,9 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
                 Long id = resultSet.getLong("id");
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
+                String username = resultSet.getString("username");
 
-                Utilizator utilizator = new Utilizator(firstName, lastName);
+                Utilizator utilizator = new Utilizator(username, firstName, lastName);
                 utilizator.setId(id);
                 users.add(utilizator);
             }
@@ -112,7 +115,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
 
         String sql = "insert into users (first_name, last_name ) values (?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = DriverManager.getConnection(url, _username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, entity.getFirstName());
@@ -130,7 +133,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
 
         String sql = "delete from users where id = " + id;
 
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = DriverManager.getConnection(url, _username, password);
         PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -143,7 +146,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     public Utilizator update(Utilizator entity) {
 
         String sql = "update users set first_name = ? , last_name = ?  where id = ? ";
-        try (Connection connection = DriverManager.getConnection(url, username, password);
+        try (Connection connection = DriverManager.getConnection(url, _username, password);
         PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, entity.getFirstName());
             ps.setString(2, entity.getLastName());

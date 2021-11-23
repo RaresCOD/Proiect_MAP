@@ -27,23 +27,6 @@ public class UtilizatorService {
     Repository<Tuple<Long, Long>, Prietenie> repoFriend;
     Repository<Long, Message> repoMessages;
 
-    private void makeFriends() {
-        for(Prietenie curent : repoFriend.findAll()) {
-            Long left = curent.getId().getLeft();
-            Long right = curent.getId().getRight();
-            Utilizator util1 = repo.findOne(left);
-            Utilizator util2 = repo.findOne(right);
-            util1.addFriend(util2);
-            util2.addFriend(util1);
-//            System.out.println(util1.getFriends());
-        }
-        for(Utilizator curent:repo.findAll()){
-            System.out.println(curent);
-            System.out.println(curent.getFriends());
-        }
-
-    }
-
     private Long lastID() {
         Long lID = 0L;
         for(Utilizator util : repo.findAll()) {
@@ -71,7 +54,6 @@ public class UtilizatorService {
         this.repo = repo;
         this.repoFriend = repoFriend;
         this.repoMessages = repoMessages;
-//        makeFriends();
     }
 
     /**
@@ -80,8 +62,8 @@ public class UtilizatorService {
      * @param lastName ln
      * @return add user
      */
-    public Utilizator addUtilizator(String firstName, String lastName) {
-        Utilizator nou = new Utilizator(firstName, lastName);
+    public Utilizator addUtilizator(String username, String firstName, String lastName) {
+        Utilizator nou = new Utilizator(username, firstName, lastName);
         Long id = lastID() + 1L;
         nou.setId(id);
         try {
@@ -129,8 +111,8 @@ public class UtilizatorService {
      * @param lastName ln
      * @return update user
      */
-    public Utilizator updateUtilizator(Long id, String firstName, String lastName) {
-        Utilizator nou = new Utilizator(firstName, lastName);
+    public Utilizator updateUtilizator(Long id, String username, String firstName, String lastName) {
+        Utilizator nou = new Utilizator(username, firstName, lastName);
         nou.setId(id);
         try {
             Utilizator util = repo.update(nou);
@@ -167,10 +149,6 @@ public class UtilizatorService {
         prietenie.setDate(new Date(currentDate.getYear() - 1900, currentDate.getMonthValue(), currentDate.getDayOfMonth()));
 
         repoFriend.save(prietenie);
-        Utilizator util1 = repo.findOne(id1);
-        Utilizator util2 = repo.findOne(id2);
-        util1.addFriend(util2);
-        util2.addFriend(util1);
     }
 
     /**
@@ -198,11 +176,22 @@ public class UtilizatorService {
     /**
      *
      * @param id id
-     * @return specific frineds
+     * @return specific friends
      */
-    public List<Utilizator> getFriends(Long id)  {
-        Utilizator util = repo.findOne(id);
-        return util.getFriends();
+    public List<Tuple<Utilizator, Date>> getFriends(Long id)  {
+        List<Tuple<Utilizator, Date>> rez = new ArrayList<>();
+        for(Prietenie prieten : repoFriend.findAll())
+        {
+            if(prieten.getId().getLeft() == id)
+            {
+                rez.add(new Tuple(repo.findOne(prieten.getId().getRight()), prieten.getDate()));
+            }
+            else if (prieten.getId().getRight() == id)
+            {
+                rez.add(new Tuple(repo.findOne(prieten.getId().getLeft()), prieten.getDate()));
+            }
+        }
+        return rez;
     }
 
     /**
@@ -242,7 +231,7 @@ public class UtilizatorService {
     private Long getUserId(String userName) {
         Iterable<Utilizator> list = repo.findAll();
         for (Utilizator curent: list) {
-            if(curent.getFirstName().equals(userName)) {
+            if(curent.getUsername().equals(userName)) {
                 return curent.getId();
             }
         }

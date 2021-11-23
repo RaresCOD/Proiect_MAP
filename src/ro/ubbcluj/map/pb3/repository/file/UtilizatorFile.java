@@ -22,7 +22,7 @@ public class UtilizatorFile extends AbstractFileRepository<Long, Utilizator> {
 
     @Override
     public Utilizator extractEntity(List<String> attributes) {
-        Utilizator ut = new Utilizator(attributes.get(1), attributes.get(2));
+        Utilizator ut = new Utilizator(attributes.get(1), attributes.get(2), attributes.get(3));
         ut.setId(Long.parseLong(attributes.get(0)));
         return ut;
     }

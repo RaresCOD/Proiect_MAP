@@ -8,6 +8,7 @@ import java.util.Objects;
  * User class
  */
 public class Utilizator extends Entity<Long>{
+    private String username;
     /**
      * firstname
      */
@@ -26,7 +27,8 @@ public class Utilizator extends Entity<Long>{
      * @param firstName fn
      * @param lastName ln
      */
-    public Utilizator(String firstName, String lastName) {
+    public Utilizator(String username, String firstName, String lastName) {
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -61,6 +63,22 @@ public class Utilizator extends Entity<Long>{
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    /**
+     * getter
+     * @return username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * setter
+     * @param username
+     */
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**

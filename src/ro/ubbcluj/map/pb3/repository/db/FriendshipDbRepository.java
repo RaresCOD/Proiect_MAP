@@ -7,7 +7,9 @@ import ro.ubbcluj.map.pb3.domain.validators.Validator;
 import ro.ubbcluj.map.pb3.repository.Repository;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**

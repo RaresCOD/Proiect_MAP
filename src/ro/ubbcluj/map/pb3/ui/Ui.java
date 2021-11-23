@@ -39,14 +39,16 @@ public class Ui {
         try {
             cmd = Integer.parseInt(cin.readLine());
             Long id;
-            String firstName, lastName;
+            String username, firstName, lastName;
             switch (cmd){
                 case 1:
+                    System.out.println("Username: ");
+                    username = cin.readLine();
                     System.out.println("Prenume: ");
                     firstName = cin.readLine();
                     System.out.println("Nume de familie: ");
                     lastName = cin.readLine();
-                    service.addUtilizator(firstName, lastName);
+                    service.addUtilizator(username, firstName, lastName);
                     break;
                 case 2:
                     System.out.println("Id: ");
@@ -66,11 +68,13 @@ public class Ui {
                         break;
                     }
                     id = Long.valueOf(id3);
+                    System.out.println("Username: ");
+                    username = cin.readLine();
                     System.out.println("Prenume: ");
                     firstName = cin.readLine();
                     System.out.println("Nume de familie: ");
                     lastName = cin.readLine();
-                    service.updateUtilizator(id, firstName, lastName);
+                    service.updateUtilizator(id, username, firstName, lastName);
                     break;
                 case 4:
                     Iterable<Utilizator> all = service.getAll();
@@ -171,7 +175,7 @@ public class Ui {
                     break;
                 case 10:
                     System.out.println("Login: ");
-                    String username = cin.readLine();
+                    username = cin.readLine();
                     Long id4 = service.Login(username);
                     System.out.println(id4);
                     if( id4 != null) {

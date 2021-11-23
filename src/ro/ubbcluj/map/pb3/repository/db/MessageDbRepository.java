@@ -44,12 +44,14 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
                 PreparedStatement ps1 = connection.prepareStatement(sql1);
                 ResultSet resultSet1 = ps1.executeQuery();
-                Utilizator utilizator = new Utilizator("a","a");
+                Utilizator utilizator = new Utilizator("a","a","a");
                 while (resultSet1.next()) {
                     String firstName = resultSet1.getString("first_name");
                     String lastName = resultSet1.getString("last_name");
+                    String username = resultSet1.getString("username");
                     utilizator.setFirstName(firstName);
                     utilizator.setLastName(lastName);
+                    utilizator.setUsername(username);
                     utilizator.setId(Long.valueOf(from));
                 }
 
@@ -65,7 +67,8 @@ public class MessageDbRepository implements Repository<Long, Message> {
                     while (resultSet2.next()) {
                         String firstName1 = resultSet2.getString("first_name");
                         String lastName1 = resultSet2.getString("last_name");
-                        Utilizator utilizator1 = new Utilizator(firstName1, lastName1);
+                        String username1 = resultSet2.getString("username");
+                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1);
                         utilizator1.setId(Long.valueOf(curent));
                         list.add(utilizator1);
                     }
@@ -98,12 +101,14 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
                 PreparedStatement ps1 = connection.prepareStatement(sql1);
                 ResultSet resultSet1 = ps1.executeQuery();
-                Utilizator utilizator = new Utilizator("a","a");
+                Utilizator utilizator = new Utilizator("a","a","a");
                 while (resultSet1.next()) {
                     String firstName = resultSet1.getString("first_name");
                     String lastName = resultSet1.getString("last_name");
+                    String username = resultSet1.getString("username");
                     utilizator.setFirstName(firstName);
                     utilizator.setLastName(lastName);
+                    utilizator.setUsername(username);
                     utilizator.setId(Long.valueOf(from));
                 }
 
@@ -119,7 +124,8 @@ public class MessageDbRepository implements Repository<Long, Message> {
                     while (resultSet2.next()) {
                         String firstName1 = resultSet2.getString("first_name");
                         String lastName1 = resultSet2.getString("last_name");
-                        Utilizator utilizator1 = new Utilizator(firstName1, lastName1);
+                        String username1 = resultSet2.getString("username");
+                        Utilizator utilizator1 = new Utilizator(username1, firstName1, lastName1);
                         utilizator1.setId(Long.valueOf(curent));
                         list.add(utilizator1);
                     }

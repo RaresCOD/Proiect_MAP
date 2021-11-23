@@ -28,5 +28,7 @@ public class UtilizatorValidator implements Validator<Utilizator> {
             throw new ValidationException("nume vid");
         if(entity.getLastName().equals(""))
             throw new ValidationException("nume vid");
+        if(entity.getUsername().equals(""))
+            throw new ValidationException("username-ul nu poate fi vid");
     }
 }

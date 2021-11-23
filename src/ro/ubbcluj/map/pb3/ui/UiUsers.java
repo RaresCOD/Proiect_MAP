@@ -1,12 +1,14 @@
 package ro.ubbcluj.map.pb3.ui;
 
 import ro.ubbcluj.map.pb3.Message.Message;
+import ro.ubbcluj.map.pb3.domain.Tuple;
 import ro.ubbcluj.map.pb3.domain.Utilizator;
 import ro.ubbcluj.map.pb3.service.UtilizatorService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,6 +37,7 @@ public class UiUsers {
                 System.out.println("1 - Send a private message");
                 System.out.println("2 - Send Group message");
                 System.out.println("3 - Reply to a message");
+                System.out.println("4 - Show all friends");
                 System.out.println("0 - Logout");
                 String cmd = cin.readLine();
                 if (Pattern.matches("^[a-zA-Z]*$", cmd)) {
@@ -43,10 +46,6 @@ public class UiUsers {
                     int cmdNou = Integer.parseInt(cmd);
                     switch (cmdNou){
                         case 1:
-                            System.out.println("Friends list: ");
-                            for(Utilizator curent: service.getFriends(userId)) {
-                                System.out.println(curent.getFirstName());
-                            }
                             System.out.println("Choose a friend to chat with:");
                             String friendUserName = cin.readLine();
                             Long friendUserId = service.Login(friendUserName);
@@ -61,11 +60,6 @@ public class UiUsers {
                             }
                             break;
                         case 2:
-                            System.out.println("Friends list: ");
-                            for(Utilizator curent: service.getFriends(userId)) {
-                                System.out.println(curent.getFirstName());
-                            }
-
                             List<Long> Listid = new ArrayList<>();
                             while (true) {
                                 System.out.println("1-Add a friend:");
@@ -107,6 +101,12 @@ public class UiUsers {
                                 System.out.println("Message");
                                 String msg1 = cin.readLine();
                                 service.sendReply(msgId, userId, msg1);
+                            }
+                            break;
+                        case 4:
+                            System.out.println("Friends list: ");
+                            for(Tuple<Utilizator, Date> curent: service.getFriends(userId)) {
+                                System.out.println(curent.getLeft().getFirstName() + " | " + curent.getLeft().getLastName() + " | " + curent.getRight());
                             }
                             break;
                         case 0:
