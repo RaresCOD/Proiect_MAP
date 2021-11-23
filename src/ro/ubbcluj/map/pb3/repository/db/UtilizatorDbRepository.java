@@ -114,13 +114,14 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     @Override
     public Utilizator save(Utilizator entity) {
 
-        String sql = "insert into users (first_name, last_name ) values (?, ?)";
+        String sql = "insert into users (username, first_name, last_name) values (?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, _username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setString(1, entity.getFirstName());
-            ps.setString(2, entity.getLastName());
+            ps.setString(1, entity.getUsername());
+            ps.setString(2, entity.getFirstName());
+            ps.setString(3, entity.getLastName());
 
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -146,7 +147,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     @Override
     public Utilizator update(Utilizator entity) {
 
-        String sql = "update users set first_name = ? , last_name = ?  where id = ? ";
+        String sql = "update users set first_name = ?, last_name = ?  where id = ? ";
         try (Connection connection = DriverManager.getConnection(url, _username, password);
         PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, entity.getFirstName());
