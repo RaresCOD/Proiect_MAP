@@ -14,10 +14,7 @@ import java.time.LocalDateTime;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * service
@@ -178,20 +175,28 @@ public class UtilizatorService {
      * @param id id
      * @return specific friends
      */
-    public List<Tuple<Utilizator, Date>> getFriends(Long id)  {
-        List<Tuple<Utilizator, Date>> rez = new ArrayList<>();
-        for(Prietenie prieten : repoFriend.findAll())
-        {
-            if(prieten.getId().getLeft() == id)
-            {
-                rez.add(new Tuple(repo.findOne(prieten.getId().getRight()), prieten.getDate()));
-            }
-            else if (prieten.getId().getRight() == id)
-            {
-                rez.add(new Tuple(repo.findOne(prieten.getId().getLeft()), prieten.getDate()));
-            }
-        }
+    public List<Tuple<Utilizator, Date>> getFriends(Long id) {
+        List<Tuple<Utilizator, Date>> rez = repoFriend.findAll().stream()
+                .filter(x -> {
+                    if (x.getId().getLeft() == id) {
+                        return true;
+                    } else if (x.getId().getRight() == id) {
+                        return true;
+                    } else return false;
+                })
+                .map(x -> new Tuple<Utilizator, Date>(repo.findOne(x.getId().getRight()), x.getDate()))
+                .toList();
+
         return rez;
+    }
+
+    /**
+     *
+     * @param id id, int month
+     * @return specific friends
+     */
+    public List<Tuple<Utilizator, Date>> getFriendsFromMonth(Long id, int month)  {
+        return getFriends(id).stream().filter(x -> x.getRight().getMonth() != month).toList();
     }
 
     /**

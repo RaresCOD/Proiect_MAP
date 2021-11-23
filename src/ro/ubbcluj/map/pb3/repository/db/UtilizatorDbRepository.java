@@ -6,6 +6,7 @@ import ro.ubbcluj.map.pb3.repository.Repository;
 
 import java.sql.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -87,7 +88,7 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
     }
 
     @Override
-    public Iterable<Utilizator> findAll() {
+    public List<Utilizator> findAll() {
         Set<Utilizator> users = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, _username, password);
              PreparedStatement statement = connection.prepareStatement("SELECT * from users");
@@ -103,11 +104,11 @@ public class UtilizatorDbRepository implements Repository<Long, Utilizator> {
                 utilizator.setId(id);
                 users.add(utilizator);
             }
-            return users;
+            return users.stream().toList();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
+        return users.stream().toList();
     }
 
     @Override

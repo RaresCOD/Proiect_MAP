@@ -86,7 +86,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
     }
 
     @Override
-    public Iterable<Message> findAll() {
+    public List<Message> findAll() {
         String sql = "select * from messages";
 
         try(Connection connection = DriverManager.getConnection(url, username, password);
@@ -135,7 +135,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
                 message.setId(idCurent);
                 all.add(message);
             }
-            return all;
+            return all.stream().toList();
         } catch (SQLException e) {
             e.printStackTrace();
         }

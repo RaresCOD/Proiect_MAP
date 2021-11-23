@@ -27,7 +27,7 @@ public interface Repository<ID, E extends Entity<ID>> {
      *
      * @return all entities
      */
-    Iterable<E> findAll();
+    List<E> findAll();
 
     /**
      *

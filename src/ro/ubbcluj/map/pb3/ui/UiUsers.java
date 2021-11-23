@@ -38,6 +38,7 @@ public class UiUsers {
                 System.out.println("2 - Send Group message");
                 System.out.println("3 - Reply to a message");
                 System.out.println("4 - Show all friends");
+                System.out.println("5 - Show friends from a specific month");
                 System.out.println("0 - Logout");
                 String cmd = cin.readLine();
                 if (Pattern.matches("^[a-zA-Z]*$", cmd)) {
@@ -106,6 +107,14 @@ public class UiUsers {
                         case 4:
                             System.out.println("Friends list: ");
                             for(Tuple<Utilizator, Date> curent: service.getFriends(userId)) {
+                                System.out.println(curent.getLeft().getFirstName() + " | " + curent.getLeft().getLastName() + " | " + curent.getRight());
+                            }
+                            break;
+                        case 5:
+                            System.out.println("Enter the month number: ");
+                            String _cmd = cin.readLine();
+                            int month = Integer.parseInt(_cmd);
+                            for(Tuple<Utilizator, Date> curent: service.getFriendsFromMonth(userId, month)) {
                                 System.out.println(curent.getLeft().getFirstName() + " | " + curent.getLeft().getLastName() + " | " + curent.getRight());
                             }
                             break;

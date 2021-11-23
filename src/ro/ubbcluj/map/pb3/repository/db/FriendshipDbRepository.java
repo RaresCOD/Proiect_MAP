@@ -60,7 +60,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
 
 
     @Override
-    public Iterable<Prietenie> findAll() {
+    public List<Prietenie> findAll() {
         Set<Prietenie> friends = new HashSet<>();
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement statement = connection.prepareStatement("select * from friendship");
@@ -76,7 +76,7 @@ public class FriendshipDbRepository implements Repository<Tuple<Long, Long>, Pri
                 prietenie.setDate(date);
                 friends.add(prietenie);
             }
-            return friends;
+            return friends.stream().toList();
         } catch (SQLException e) {
             e.printStackTrace();
         }

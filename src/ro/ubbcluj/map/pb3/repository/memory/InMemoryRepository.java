@@ -36,8 +36,8 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
     }
 
     @Override
-    public Iterable<E> findAll() {
-        return entities.values();
+    public List<E> findAll() {
+        return entities.values().stream().toList();
     }
 
     @Override
