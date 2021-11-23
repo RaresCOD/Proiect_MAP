@@ -9,6 +9,7 @@ import ro.ubbcluj.map.pb3.domain.Utilizator;
 import ro.ubbcluj.map.pb3.domain.validators.ValidationException;
 import ro.ubbcluj.map.pb3.repository.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -253,7 +254,12 @@ public class UtilizatorService {
         to.add(user2);
         Message message = new Message(from, to, msg);
         message.setReplyMsg(null);
-        repoMessages.save(message);
+        message.setData(LocalDateTime.now());
+        try{
+            repoMessages.save(message);
+        } catch (ValidationException e) {
+            System.out.println(e);
+        }
     }
 
     public void addGroupMessage(Long id1, List<Long> Listid, String msg) {
@@ -267,7 +273,12 @@ public class UtilizatorService {
 //        to.add(user2);
         Message message = new Message(from, to, msg);
         message.setReplyMsg(null);
-        repoMessages.save(message);
+        message.setData(LocalDateTime.now());
+        try{
+            repoMessages.save(message);
+        } catch (ValidationException e) {
+            System.out.println(e);
+        }
     }
 
     public void showAllMessagesForThisUser(Long userId) {
@@ -281,7 +292,7 @@ public class UtilizatorService {
                 }
             }
             if (found == true) {
-                System.out.println(curent.getFrom().getFirstName() + " sent " + curent.getMsg() + " id: " + curent.getId());
+                System.out.println(curent.getFrom().getFirstName() + " sent " + curent.getMsg() + " id: " + curent.getId() + " " + curent.getData());
             }
         }
     }
@@ -314,7 +325,13 @@ public class UtilizatorService {
         }
         Message newReply = new Message(from, to, msg);
         newReply.setReplyMsg(message);
-        repoMessages.save(newReply);
+        newReply.setData(LocalDateTime.now());
+        try{
+            repoMessages.save(newReply);
+        } catch (ValidationException e) {
+            System.out.println(e);
+        }
+
     }
 
 }

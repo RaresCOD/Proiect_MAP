@@ -6,6 +6,7 @@ import ro.ubbcluj.map.pb3.domain.validators.Validator;
 import ro.ubbcluj.map.pb3.repository.Repository;
 
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 public class MessageDbRepository implements Repository<Long, Message> {
@@ -138,7 +139,8 @@ public class MessageDbRepository implements Repository<Long, Message> {
 
     @Override
     public Message save(Message entity) {
-        String sql = "insert into messages (from1, to1, msg, rplymsg) values (?, ?, ?, ?)";
+        validator.validate(entity);
+        String sql = "insert into messages (from1, to1, msg, rplymsg, data) values (?, ?, ?, ?, ?)";
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
              PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -156,6 +158,7 @@ public class MessageDbRepository implements Repository<Long, Message> {
             } else {
                 ps.setInt(4, Math.toIntExact(entity.getReplyMsg().getId()));
             }
+            ps.setDate(5, java.sql.Date.valueOf(entity.getData().toLocalDate()));
 
             ps.executeUpdate();
 //            ps.setDate(4, java.sql.Date.valueOf(entity.getData().toLocalDate()));
