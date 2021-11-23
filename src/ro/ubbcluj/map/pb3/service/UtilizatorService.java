@@ -294,6 +294,14 @@ public class UtilizatorService {
         }
     }
 
+    public boolean areFriends(Long id1, Long id2) {
+        if (repoFriend.findOne(new Tuple<>(id1,id2)) == null && repoFriend.findOne(new Tuple<>(id2,id1)) == null) {
+            return false;
+        }
+        return true;
+    }
+
+
     public void sendReply(Long msgId, Long userId, String msg) {
         Utilizator from = repo.findOne(userId);
         Message message = repoMessages.findOne(msgId);

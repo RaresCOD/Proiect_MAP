@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class UiUsers {
     BufferedReader cin = new BufferedReader(new InputStreamReader((System.in)));
@@ -33,71 +34,87 @@ public class UiUsers {
                 System.out.println("////////////////");
                 System.out.println("1 - Send a private message");
                 System.out.println("2 - Send Group message");
-//                System.out.println("3 - Group chat");
-                System.out.println("4 - Reply to a message");
+                System.out.println("3 - Reply to a message");
                 System.out.println("0 - Logout");
-                int cmd = Integer.parseInt(cin.readLine());
-                switch (cmd){
-                    case 1:
-                        System.out.println("Friends list: ");
-                        for(Utilizator curent: service.getFriends(userId)) {
-                            System.out.println(curent.getFirstName());
-                        }
-                        System.out.println("Choose a friend to chat with:");
-                        String friendUserName = cin.readLine();
-                        Long friendUserId = service.Login(friendUserName);
-                        if (friendUserId != null) {
-                            System.out.println("Message:");
-                            String msg = cin.readLine();
-                            service.addMessage(userId, friendUserId, msg);
-                        }
-                        break;
-                    case 2:
-                        System.out.println("Friends list: ");
-                        for(Utilizator curent: service.getFriends(userId)) {
-                            System.out.println(curent.getFirstName());
-                        }
-
-                        List<Long> Listid = new ArrayList<>();
-                        while (true) {
-                            int cmd1;
-                            System.out.println("1-Add a friend:");
-                            System.out.println("0-Exit");
-                            cmd1 = Integer.parseInt(cin.readLine());
-                            if(cmd1 == 0) {
+                String cmd = cin.readLine();
+                if (Pattern.matches("^[a-zA-Z]*$", cmd)) {
+                    System.out.println("Invalid input");
+                } else {
+                    int cmdNou = Integer.parseInt(cmd);
+                    switch (cmdNou){
+                        case 1:
+                            System.out.println("Friends list: ");
+                            for(Utilizator curent: service.getFriends(userId)) {
+                                System.out.println(curent.getFirstName());
+                            }
+                            System.out.println("Choose a friend to chat with:");
+                            String friendUserName = cin.readLine();
+                            Long friendUserId = service.Login(friendUserName);
+                            if(service.areFriends(userId, friendUserId) == false) {
+                                System.out.println(friendUserName + " is not a friend");
                                 break;
-                            } else {
-                                String friendUserName1 = cin.readLine();
-                                Long friendUserId1 = service.Login(friendUserName1);
+                            }
+                            if (friendUserId != null) {
+                                System.out.println("Message:");
+                                String msg = cin.readLine();
+                                service.addMessage(userId, friendUserId, msg);
+                            }
+                            break;
+                        case 2:
+                            System.out.println("Friends list: ");
+                            for(Utilizator curent: service.getFriends(userId)) {
+                                System.out.println(curent.getFirstName());
+                            }
 
-                                if (friendUserId1 == null) {
-                                    System.out.println("Invalid User");
+                            List<Long> Listid = new ArrayList<>();
+                            while (true) {
+                                System.out.println("1-Add a friend:");
+                                System.out.println("0-Exit");
+                                String cmd11 = cin.readLine();
+                                if (Pattern.matches("^[a-zA-Z]*$", cmd11)) {
+                                    System.out.println("Invalid input");
                                 } else {
-                                    Listid.add(friendUserId1);
+                                    int cmd1 = Integer.parseInt(cmd11);
+                                    if(cmd1 == 0) {
+                                        break;
+                                    } else {
+                                        String friendUserName1 = cin.readLine();
+                                        Long friendUserId1 = service.Login(friendUserName1);
+
+                                        if (friendUserId1 == null) {
+                                            System.out.println("Invalid User");
+                                        } else {
+                                            if(service.areFriends(userId, friendUserId1) == false) {
+                                                System.out.println(friendUserName1 + " is not a friend");
+                                            } else {
+                                                Listid.add(friendUserId1);
+                                            }
+                                        }
+                                    }
                                 }
                             }
-                        }
-//                    if (friendUserId != null) {
-                        System.out.println("Message:");
-                        String msg = cin.readLine();
-                        service.addGroupMessage(userId,Listid, msg);
-
-                        break;
-                    case 3:
-                        System.out.println("Group Chats:");
-
-                        break;
-                    case 4:
-                        System.out.println("Select the message and user you want to reply to\nId:");
-                        Long msgId = Long.valueOf(cin.readLine());
-                        System.out.println("Message");
-                        String msg1 = cin.readLine();
-                        service.sendReply(msgId, userId, msg1);
-                        break;
-                    case 0:
-                        run = false;
-                        break;
+                            System.out.println("Message:");
+                            String msg = cin.readLine();
+                            service.addGroupMessage(userId,Listid, msg);
+                            break;
+                        case 3:
+                            System.out.println("Select the message and user you want to reply to\nId:");
+                            String msgId1 = cin.readLine();
+                            if (Pattern.matches("^[a-zA-Z]*$", msgId1)) {
+                                System.out.println("Invalid input");
+                            } else {
+                                Long msgId = Long.parseLong(msgId1);
+                                System.out.println("Message");
+                                String msg1 = cin.readLine();
+                                service.sendReply(msgId, userId, msg1);
+                            }
+                            break;
+                        case 0:
+                            run = false;
+                            break;
+                    }
                 }
+
             }
 
         } catch (IOException e) {
